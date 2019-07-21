@@ -1,0 +1,139 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
+using System.Runtime.Remoting.Contexts;
+using OidtWpf.DataModel;
+using OxyPlot;
+using OxyPlot.Axes;
+using OxyPlot.Series;
+
+namespace OidtWpf.ViewModels
+{
+    public class Window1Model : INotifyPropertyChanged
+    {
+        private PlotModel plotModel;
+        public PlotModel PlotModel
+        {
+            get { return plotModel; }
+            set { plotModel = value; OnPropertyChanged("PlotModel"); }
+
+
+        }
+
+        public Window1Model(int parameter)
+        {
+            PlotModel = new PlotModel();
+            SetUpModel();
+            LoadData(parameter);
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            PropertyChangedEventHandler handler = PropertyChanged;
+            if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
+        }
+        private void LoadData(int parameter)
+        {
+
+            DataContext context = new DataContext();
+            switch (parameter)
+            {
+                case 1:
+
+                    var stageEase = new LineSeries
+                    {
+                        StrokeThickness = 2,
+                        MarkerSize = 3,
+                        CanTrackerInterpolatePoints = false,
+                        Title = string.Format("Stage easiness"),
+                        Smooth = false,
+                    };
+                    var NewUsersSeries = new LineSeries
+                    {
+                        StrokeThickness = 3,
+                        MarkerSize = 4,
+                        CanTrackerInterpolatePoints = false,
+                        Title = string.Format("NewUserSeries"),
+                        Smooth = false,
+                    };
+
+                    foreach (var data in context.StagesStats.ToList())
+                    {
+                        stageEase.Points.Add(new DataPoint(Axis.ToDouble(data.StageNum), data.Wins));
+                        //NewUsersSeries.Points.Add(new DataPoint(Axis.ToDouble(data.Date), data.NewUsers));
+                    }
+                    PlotModel.Series.Add(stageEase);
+                    //PlotModel.Series.Add(NewUsersSeries);
+                    break;
+
+                case 2:
+                    var Revenue = new LineSeries
+                    {
+                        StrokeThickness = 2,
+                        MarkerSize = 3,
+                        CanTrackerInterpolatePoints = false,
+                        Title = string.Format("Revenue"),
+                        Smooth = false,
+                    };
+                    var SoldUsd = new LineSeries
+                    {
+                        StrokeThickness = 3,
+                        MarkerSize = 4,
+                        CanTrackerInterpolatePoints = false,
+                        Title = string.Format("Sold Items Cost in USD"),
+                        Smooth = false,
+                    };
+
+                    foreach (var data in context.Prediction.ToList())
+                    {
+                        Revenue.Points.Add(new DataPoint(DateTimeAxis.ToDouble(data.Date), data.Revenue));
+                        SoldUsd.Points.Add(new DataPoint(DateTimeAxis.ToDouble(data.Date), data.SoldUSD));
+                    }
+                    PlotModel.Series.Add(Revenue);
+                    PlotModel.Series.Add(SoldUsd);
+                    break;
+                case 3:
+                    var soldAmount = new LineSeries
+                    {
+                        StrokeThickness = 2,
+                        MarkerSize = 3,
+                        CanTrackerInterpolatePoints = false,
+                        Title = string.Format("Amount of sold Items"),
+                        Smooth = false,
+                    };
+                    foreach (var data in context.Prediction.ToList())
+                    {
+                        soldAmount.Points.Add(new DataPoint(DateTimeAxis.ToDouble(data.Date), data.SoldAmount));
+                    }
+                    PlotModel.Series.Add(soldAmount);
+                    break;
+            }
+
+
+        }
+
+        public void SetUpModel()
+        {
+            PlotModel.LegendTitle = "Legend";
+            PlotModel.LegendOrientation = LegendOrientation.Horizontal;
+            PlotModel.LegendPlacement = LegendPlacement.Outside;
+            PlotModel.LegendPosition = LegendPosition.TopRight;
+            PlotModel.LegendBackground = OxyColor.FromAColor(200, OxyColors.White);
+            PlotModel.LegendBorder = OxyColors.Black;
+
+            //var startDate = new DateTime(2018, 01, 01);
+            //var endDate = new DateTime(2018, 07, 31);
+
+            //var minValue = DateTimeAxis.ToDouble(startDate);
+            //var maxValue = DateTimeAxis.ToDouble(endDate);
+
+            PlotModel.Axes.Add(new LinearAxis { Position = AxisPosition.Bottom, Minimum = 1, Maximum = 53 });
+
+            var valueAxis = new LinearAxis { MajorGridlineStyle = LineStyle.Solid, MinorGridlineStyle = LineStyle.Dot, Title = "Value" };
+            PlotModel.Axes.Add(valueAxis);
+        }
+    }
+}

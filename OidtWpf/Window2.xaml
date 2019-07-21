@@ -1,0 +1,13 @@
+﻿<Window x:Class="OidtWpf.Window2"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:oxy="http://oxyplot.codeplex.com"
+        xmlns:oxy1="http://oxyplot.org/wpf"
+        Title="Window2" Height="1000" Width="525">
+    <Grid>
+        <oxy1:PlotView x:Name="Plot1" Model="{Binding PlotModel}" Margin="10" Grid.Row="1">
+        </oxy1:PlotView>
+        <Slider HorizontalAlignment="Left" Margin="176,0,0,0" VerticalAlignment="Top" Width="196" ValueChanged="Slider_ValueChanged" Minimum="0" Maximum="29"/>
+    </Grid>
+</Window>
+    
